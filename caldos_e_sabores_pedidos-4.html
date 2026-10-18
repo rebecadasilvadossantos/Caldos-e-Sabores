@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17120b">
+  <title>Caldos e Sabores | Faça seu pedido</title>
+  <style>
+    :root {
+      --preto: #17120b;
+      --preto2: #241b10;
+      --amarelo: #ffc629;
+      --creme: #fff8e8;
+      --texto: #282116;
+      --cinza: #756b5c;
+      --branco: #ffffff;
+      --verde: #1f9d55;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f8f3e8;
+      color: var(--texto);
+    }
+    header {
+      background: var(--preto);
+      color: var(--branco);
+      text-align: center;
+      padding: 28px 16px 24px;
+      border-bottom: 5px solid var(--amarelo);
+    }
+    .logo-icon { font-size: 42px; line-height: 1; }
+    header h1 {
+      margin: 8px 0 5px;
+      color: var(--amarelo);
+      font-size: clamp(27px, 6vw, 40px);
+    }
+    header p { margin: 6px 0; }
+    .tagline { font-style: italic; }
+    .hours {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: 1px solid var(--amarelo);
+      border-radius: 999px;
+      color: var(--amarelo);
+      font-size: 14px;
+    }
+    main {
+      width: min(100% - 28px, 1000px);
+      margin: 24px auto 40px;
+    }
+    .intro { text-align: center; margin-bottom: 22px; }
+    .intro h2 { margin-bottom: 7px; }
+    .intro p { color: var(--cinza); margin-top: 0; }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .product {
+      background: var(--branco);
+      border: 1px solid #e9dfcc;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px #35270b0d;
+    }
+    .product-top {
+      background: linear-gradient(135deg, #2a2012, #100d08);
+      color: var(--branco);
+      padding: 18px 16px;
+      min-height: 104px;
+    }
+    .product-top .emoji { font-size: 29px; }
+    .product h3 { margin: 8px 0 4px; font-size: 19px; }
+    .product-description {
+      color: var(--cinza);
+      font-size: 13px;
+      line-height: 1.45;
+      padding: 0 16px;
+      min-height: 52px;
+    }
+    .product-body { padding: 0 16px 16px; }
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .price-row label { font-size: 14px; font-weight: 700; }
+    .price { color: #7c5600; font-weight: 800; white-space: nowrap; }
+    .add-row { display: flex; gap: 8px; align-items: center; }
+    select, input, textarea {
+      width: 100%;
+      border: 1px solid #d8cdb9;
+      border-radius: 9px;
+      padding: 11px 10px;
+      font: inherit;
+      background: white;
+      color: var(--texto);
+    }
+    .add-button, .primary-button, .secondary-button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .12s, filter .12s;
+    }
+    button:active { transform: scale(.98); }
+    .add-button { background: var(--amarelo); color: var(--preto); white-space: nowrap; }
+    .section-card {
+      margin-top: 22px;
+      background: white;
+      border: 1px solid #e9dfcc;
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .section-card h2 { margin: 0 0 15px; }
+    .cart-empty { color: var(--cinza); }
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee4d4;
+    }
+    .cart-item:last-child { border-bottom: 0; }
+    .cart-item small { display: block; color: var(--cinza); margin-top: 4px; }
+    .quantity-controls { display: flex; align-items: center; gap: 8px; }
+    .quantity-controls button {
+      width: 30px; height: 30px; border: 0; border-radius: 8px;
+      background: #f3e8cf; font-weight: 900; font-size: 18px; cursor: pointer;
+    }
+    .remove-button {
+      display: block; border: 0; background: transparent; color: #a12d21;
+      padding: 5px 0 0; margin-left: auto; cursor: pointer; font-size: 12px;
+    }
+    .total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 2px solid var(--amarelo); margin-top: 12px; padding-top: 15px;
+      font-size: 20px; font-weight: 900;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-weight: 700; font-size: 14px; }
+    .full { grid-column: 1 / -1; }
+    .delivery-options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .delivery-option {
+      flex: 1; min-width: 140px; border: 1px solid #d8cdb9; border-radius: 10px;
+      padding: 12px; cursor: pointer; display: flex; gap: 8px; align-items: center;
+    }
+    .delivery-option input { width: auto; }
+    .primary-button {
+      width: 100%; margin-top: 18px; padding: 16px;
+      background: var(--verde); color: white; font-size: 17px;
+    }
+    .secondary-button { background: #f1e6d0; color: var(--preto); }
+    .notice {
+      background: #fff4cf; border: 1px solid #f1d777; border-radius: 10px;
+      padding: 12px; font-size: 13px; line-height: 1.5; color: #59430b;
+    }
+    footer {
+      background: var(--preto); color: white; text-align: center; padding: 22px 14px;
+      border-top: 5px solid var(--amarelo); line-height: 1.7;
+    }
+    footer strong { color: var(--amarelo); }
+    @media (max-width: 650px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .product { display: grid; grid-template-columns: 112px 1fr; }
+      .product-top { grid-row: 1 / span 2; display: flex; flex-direction: column; justify-content: center; padding: 12px; }
+      .product-top h3 { font-size: 16px; }
+      .product-description { min-height: 0; padding: 12px 12px 0; }
+      .product-body { padding: 0 12px 12px; }
+      .price-row { margin: 8px 0; }
+      .add-row { align-items: stretch; }
+      .add-row select { min-width: 0; padding: 9px 5px; }
+      .add-button { padding: 10px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .section-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-icon">🍲</div>
+    <h1>Caldos e Sabores</h1>
+    <p class="tagline">Mais que caldos, é sabor em cada colher!</p>
+    <p>📍 Saquarema/RJ</p>
+    <div class="hours">🕖 Sexta e sábado • 19h20 às 23h00 | Domingo • 18h30 às 22h30</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Nosso cardápio 💛</h2>
+      <p>Escolha seus caldos, adicione ao carrinho e finalize pelo WhatsApp.</p>
+    </section>
+
+    <section class="menu-grid" id="menu"></section>
+
+    <section class="section-card" aria-labelledby="cart-heading">
+      <h2 id="cart-heading">🛒 Seu pedido</h2>
+      <div id="cart-items" class="cart-empty">Seu carrinho ainda está vazio. Ele não vai se encher por telepatia.</div>
+      <div class="total-row"><span>Total</span><span id="cart-total">R$ 0,00</span></div>
+      <button class="secondary-button" id="clear-cart" type="button" style="margin-top:12px">Limpar carrinho</button>
+    </section>
+
+    <section class="section-card">
+      <h2>📝 Seus dados</h2>
+      <form id="order-form">
+        <div class="form-grid">
+          <div class="field">
+            <label for="customer-name">Seu nome *</label>
+            <input id="customer-name" name="name" autocomplete="name" required placeholder="Como podemos te chamar?">
+          </div>
+          <div class="field">
+            <label for="customer-phone">Seu telefone *</label>
+            <input id="customer-phone" name="phone" type="tel" autocomplete="tel" required placeholder="(22) 99999-9999">
+          </div>
+          <div class="field full">
+            <label>Como deseja receber? *</label>
+            <div class="delivery-options">
+              <label class="delivery-option"><input type="radio" name="delivery" value="Retirada no local" checked> Retirada no local</label>
+              <label class="delivery-option"><input type="radio" name="delivery" value="Entrega por aplicativo"> Entrega por aplicativo</label>
+            </div>
+          </div>
+          <div class="field full" id="address-field" hidden>
+            <p><strong>📍 Endereço de entrega</strong></p>
+            <div class="form-grid">
+              <div class="field">
+                <label for="customer-cep">CEP (opcional)</label>
+                <input id="customer-cep" name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="Ex.: 28990-000">
+              </div>
+              <div class="field">
+                <label for="customer-city">Cidade *</label>
+                <input id="customer-city" name="city" autocomplete="address-level2" value="Saquarema" required>
+              </div>
+              <div class="field full">
+                <label for="customer-address">Rua / Avenida *</label>
+                <input id="customer-address" name="address" autocomplete="address-line1" placeholder="Nome da rua ou avenida" required>
+              </div>
+              <div class="field">
+                <label for="customer-number">Número *</label>
+                <input id="customer-number" name="number" autocomplete="address-line2" placeholder="Nº da casa/prédio" required>
+              </div>
+              <div class="field">
+                <label for="customer-complement">Complemento (opcional)</label>
+                <input id="customer-complement" name="complement" placeholder="Casa, bloco, apartamento...">
+              </div>
+              <div class="field full">
+                <label for="customer-neighborhood">Bairro *</label>
+                <input id="customer-neighborhood" name="neighborhood" autocomplete="address-level3" placeholder="Nome do bairro" required>
+              </div>
+              <div class="field full">
+                <label for="customer-reference">Ponto de referência (opcional)</label>
+                <input id="customer-reference" name="reference" placeholder="Perto de onde? Cor, portão, comércio próximo...">
+              </div>
+            </div>
+          </div>
+          <div class="field full">
+            <label for="payment-method">Forma de pagamento *</label>
+            <select id="payment-method" name="payment" required>
+              <option value="" disabled selected>Selecione como vai pagar</option>
+              <option value="Pix">Pix</option>
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="Combinar pelo WhatsApp">Combinar pelo WhatsApp</option>
+            </select>
+          </div>
+          <div class="field full" id="change-field" hidden>
+            <label for="change-for">Precisa de troco para quanto? (opcional)</label>
+            <input id="change-for" name="change-for" inputmode="decimal" placeholder="Ex.: R$ 50,00">
+          </div>
+          <div class="field full">
+            <label for="observations">Observações (opcional)</label>
+            <textarea id="observations" name="observations" rows="3" placeholder="Ex.: tirar algum ingrediente, ponto de referência..."></textarea>
+          </div>
+        </div>
+        <p class="notice">A entrega é feita por aplicativo e a taxa deve ser consultada diretamente nele. Ao finalizar, o WhatsApp abrirá com a mensagem do pedido. Confira e toque em <strong>Enviar</strong> para concluir.</p>
+        <button class="primary-button" type="submit">Finalizar pedido pelo WhatsApp ↗</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <strong>Caldos e Sabores 🍲</strong><br>
+    Rua do Faraó, Travessa Dona Rita, 145<br>
+    Saquarema/RJ<br>
+    <strong>WhatsApp: (22) 99932-1849</strong><br>
+    Sexta e sábado • 19h20 às 23h00 | Domingo • 18h30 às 22h30
+  </footer>
+
+  <script>
+    // Os preços podem ser alterados aqui, se necessário.
+    const produtos = [
+      { id: "verde", nome: "Caldo Verde", emoji: "🥬", descricao: "Caldo cremoso com batata, couve e linguiça calabresa.", p380: 12, p500: 16 },
+      { id: "mocoto", nome: "Mocotó", emoji: "🍖", descricao: "Caldo encorpado, bem temperado e finalizado com cheiro-verde.", p380: 15, p500: 19 },
+      { id: "ervilha", nome: "Caldo de Ervilha", emoji: "🫛", descricao: "Caldo cremoso de ervilha, bem temperado e saboroso.", p380: 13, p500: 17 }
+    ];
+
+    const WHATSAPP = "5522999321849";
+    const carrinho = [];
+
+    const dinheiro = valor => valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    function renderMenu() {
+      const menu = document.getElementById("menu");
+      menu.innerHTML = produtos.map(p => `
+        <article class="product">
+          <div class="product-top">
+            <span class="emoji">${p.emoji}</span>
+            <h3>${p.nome}</h3>
+          </div>
+          <p class="product-description">${p.descricao}</p>
+          <div class="product-body">
+            <div class="price-row"><label>380 ml</label><span class="price">${dinheiro(p.p380)}</span></div>
+            <div class="price-row"><label>500 ml</label><span class="price">${dinheiro(p.p500)}</span></div>
+            <div class="add-row">
+              <select id="size-${p.id}" aria-label="Tamanho de ${p.nome}">
+                <option value="380">380 ml</option>
+                <option value="500">500 ml</option>
+              </select>
+              <button class="add-button" type="button" onclick="adicionar('${p.id}')">Adicionar +</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function adicionar(id) {
+      const p = produtos.find(item => item.id === id);
+      const tamanho = document.getElementById(`size-${id}`).value;
+      const preco = tamanho === "380" ? p.p380 : p.p500;
+      const existente = carrinho.find(item => item.id === id && item.tamanho === tamanho);
+      if (existente) existente.quantidade++;
+      else carrinho.push({ id, nome: p.nome, tamanho, preco, quantidade: 1 });
+      renderCarrinho();
+    }
+
+    function alterarQuantidade(id, tamanho, delta) {
+      const item = carrinho.find(i => i.id === id && i.tamanho === tamanho);
+      if (!item) return;
+      item.quantidade += delta;
+      if (item.quantidade <= 0) carrinho.splice(carrinho.indexOf(item), 1);
+      renderCarrinho();
+    }
+
+    function removerItem(id, tamanho) {
+      const index = carrinho.findIndex(i => i.id === id && i.tamanho === tamanho);
+      if (index >= 0) carrinho.splice(index, 1);
+      renderCarrinho();
+    }
+
+    function renderCarrinho() {
+      const area = document.getElementById("cart-items");
+      if (!carrinho.length) {
+        area.className = "cart-empty";
+        area.textContent = "Seu carrinho ainda está vazio. Escolha um caldo ali em cima.";
+      } else {
+        area.className = "";
+        area.innerHTML = carrinho.map(item => `
+          <div class="cart-item">
+            <div>
+              <strong>${item.nome}</strong>
+              <small>${item.tamanho} ml • ${dinheiro(item.preco)} cada</small>
+              <small>Subtotal: <strong>${dinheiro(item.preco * item.quantidade)}</strong></small>
+              <button class="remove-button" type="button" onclick="removerItem('${item.id}', '${item.tamanho}')">Remover item</button>
+            </div>
+            <div class="quantity-controls">
+              <button type="button" aria-label="Diminuir quantidade" onclick="alterarQuantidade('${item.id}', '${item.tamanho}', -1)">−</button>
+              <strong>${item.quantidade}</strong>
+              <button type="button" aria-label="Aumentar quantidade" onclick="alterarQuantidade('${item.id}', '${item.tamanho}', 1)">+</button>
+            </div>
+          </div>
+        `).join("");
+      }
+      const total = carrinho.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
+      document.getElementById("cart-total").textContent = dinheiro(total);
+    }
+
+    document.getElementById("clear-cart").addEventListener("click", () => {
+      carrinho.length = 0;
+      renderCarrinho();
+    });
+
+    document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        const entrega = document.querySelector('input[name="delivery"]:checked').value === "Entrega por aplicativo";
+        document.getElementById("address-field").hidden = !entrega;
+        ["customer-city", "customer-address", "customer-number", "customer-neighborhood"].forEach(id => {
+          document.getElementById(id).required = entrega;
+        });
+      });
+    });
+
+    document.getElementById("payment-method").addEventListener("change", () => {
+      const dinheiroSelecionado = document.getElementById("payment-method").value === "Dinheiro";
+      document.getElementById("change-field").hidden = !dinheiroSelecionado;
+    });
+
+    document.getElementById("order-form").addEventListener("submit", event => {
+      event.preventDefault();
+      if (!carrinho.length) {
+        alert("Adicione pelo menos um caldo ao carrinho antes de finalizar.");
+        return;
+      }
+
+      const nome = document.getElementById("customer-name").value.trim();
+      const telefone = document.getElementById("customer-phone").value.trim();
+      const entrega = document.querySelector('input[name="delivery"]:checked').value;
+      const endereco = [
+        document.getElementById("customer-address").value.trim(),
+        `Nº ${document.getElementById("customer-number").value.trim()}`,
+        document.getElementById("customer-complement").value.trim() ? `Complemento: ${document.getElementById("customer-complement").value.trim()}` : "",
+        `Bairro: ${document.getElementById("customer-neighborhood").value.trim()}`,
+        document.getElementById("customer-city").value.trim(),
+        document.getElementById("customer-cep").value.trim() ? `CEP: ${document.getElementById("customer-cep").value.trim()}` : "",
+        document.getElementById("customer-reference").value.trim() ? `Referência: ${document.getElementById("customer-reference").value.trim()}` : ""
+      ].filter(Boolean).join("\n");
+      const pagamento = document.getElementById("payment-method").value;
+      const troco = document.getElementById("change-for").value.trim();
+      const observacoes = document.getElementById("observations").value.trim();
+      const total = carrinho.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
+
+      const linhas = [
+        "🍲 *NOVO PEDIDO - CALDOS E SABORES*",
+        "",
+        `👤 *Nome:* ${nome}`,
+        `📱 *Telefone:* ${telefone}`,
+        `🛍️ *Recebimento:* ${entrega}`,
+        `💳 *Forma de pagamento:* ${pagamento}`,
+        ...(pagamento === "Dinheiro" && troco ? [`💵 *Precisa de troco para:* ${troco}`] : []),
+        ...(entrega === "Entrega por aplicativo" && endereco ? [`📍 *Endereço de entrega:*\n${endereco}`] : []),
+        "",
+        "🧾 *ITENS DO PEDIDO*",
+        ...carrinho.map(item => `• ${item.nome} (${item.tamanho} ml) x${item.quantidade} = ${dinheiro(item.preco * item.quantidade)}`),
+        "",
+        `💰 *TOTAL DOS CALDOS: ${dinheiro(total)}*`,
+        ...(entrega === "Entrega por aplicativo" ? ["🚗 Taxa de entrega: consultar no aplicativo."] : []),
+        ...(observacoes ? ["", `📝 *Observações:* ${observacoes}`] : []),
+        "",
+        "Pedido enviado pelo site."
+      ];
+
+      const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(linhas.join("\n"))}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    renderMenu();
+    renderCarrinho();
+  </script>
+</body>
+</html>
